@@ -1,7 +1,11 @@
 import asyncio
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 load_dotenv()
@@ -10,6 +14,15 @@ app = FastAPI(
     title="Claude Code API Wrapper",
     description="Claude Code CLI를 API로 래핑한 서버",
     version="1.0.0"
+)
+
+# CORS 설정
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -31,11 +44,11 @@ async def ask_claude(request: PromptRequest):
     """
     try:
         # claude --print 옵션으로 non-interactive 실행
-        cmd = ["claude", "--print", request.prompt]
+        # Windows에서는 shell=True로 실행해야 .cmd 파일을 찾을 수 있음
+        cmd = f'claude --print "{request.prompt}"'
 
-        # asyncio subprocess로 실행
-        process = await asyncio.create_subprocess_exec(
-            *cmd,
+        process = await asyncio.create_subprocess_shell(
+            cmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             cwd=request.working_directory
@@ -72,6 +85,13 @@ async def ask_claude(request: PromptRequest):
 async def health_check():
     """서버 상태 확인"""
     return {"status": "ok"}
+
+
+@app.get("/")
+async def root():
+    """웹 UI 페이지 제공"""
+    html_path = Path(__file__).parent / "examples" / "index.html"
+    return FileResponse(html_path)
 
 
 if __name__ == "__main__":

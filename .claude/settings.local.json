@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s -X POST \"http://localhost:5000/ask\" -H \"Content-Type: application/json\" -d \"{\"\"prompt\"\": \"\"Say hello in Korean\"\"}\")"
+    ]
+  }
+}
