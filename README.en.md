@@ -1,6 +1,8 @@
-[한국어](README.md)
+[한국어](README.md) | **English**
 
 # Claude Code API Wrapper
+
+![Web UI Screenshot](docs/screenshot.png)
 
 A project that wraps Claude Code CLI as a REST API.
 

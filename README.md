@@ -1,6 +1,8 @@
-[English](README.en.md)
+**한국어** | [English](README.en.md)
 
 # Claude Code API Wrapper
+
+![Web UI Screenshot](docs/screenshot.png)
 
 Claude Code CLI를 REST API로 래핑하여 사용할 수 있게 해주는 프로젝트입니다.
 

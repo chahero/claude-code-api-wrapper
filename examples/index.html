@@ -153,6 +153,37 @@
             to { transform: rotate(360deg); }
         }
 
+        .examples {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            flex-wrap: wrap;
+            border-top: 1px solid #2a2a4a;
+            background: #0f0f1a;
+        }
+
+        .examples span {
+            color: #666;
+            font-size: 0.85rem;
+            margin-right: 4px;
+        }
+
+        .example-btn {
+            padding: 6px 12px;
+            background: #2a2a4a;
+            color: #aaa;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #3a3a5a;
+            color: #fff;
+        }
+
         .settings {
             margin-top: 20px;
             padding: 16px;
@@ -192,6 +223,12 @@
                     Hello! This is Claude Code API Wrapper. Feel free to ask anything.
                 </div>
             </div>
+            <div class="examples">
+                <span>Try:</span>
+                <button class="example-btn" onclick="useExample('Explain what Python is')">What is Python?</button>
+                <button class="example-btn" onclick="useExample('Write a hello world in JavaScript')">Hello World JS</button>
+                <button class="example-btn" onclick="useExample('What is the difference between let and const?')">let vs const</button>
+            </div>
             <div class="input-area">
                 <input
                     type="text"
@@ -227,6 +264,12 @@
                 sendMessage();
             }
         });
+
+        // Use example question
+        function useExample(text) {
+            inputEl.value = text;
+            inputEl.focus();
+        }
 
         function addMessage(content, type) {
             const messageEl = document.createElement('div');
