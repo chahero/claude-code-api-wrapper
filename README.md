@@ -2,8 +2,6 @@
 
 # Claude Code API Wrapper
 
-![Web UI Screenshot](docs/screenshot.png)
-
 Claude Code CLI를 REST API로 래핑하여 사용할 수 있게 해주는 프로젝트입니다.
 
 Claude Pro/Max 구독으로 Claude Code를 사용하면서, 별도의 API 결제 없이 API 형태로 호출할 수 있습니다.
@@ -53,6 +51,8 @@ python main.py
 - 웹 UI: http://localhost:5000
 
 ## 웹 UI 기능
+
+![Web UI Screenshot](docs/screenshot1.png)
 
 ### 주요 기능
 
@@ -116,6 +116,8 @@ curl -X POST "http://localhost:5000/ask" \
 ## 클라이언트 예시
 
 ### Python CLI
+
+![CLI Screenshot](docs/screenshot2.png)
 
 ```bash
 cd examples

@@ -2,8 +2,6 @@
 
 # Claude Code API Wrapper
 
-![Web UI Screenshot](docs/screenshot.png)
-
 A project that wraps Claude Code CLI as a REST API.
 
 Use Claude Code with your Claude Pro/Max subscription and call it as an API without additional API charges.
@@ -53,6 +51,8 @@ Once the server starts:
 - Web UI: http://localhost:5000
 
 ## Web UI Features
+
+![Web UI Screenshot](docs/screenshot1.png)
 
 ### Key Features
 
@@ -116,6 +116,8 @@ curl -X POST "http://localhost:5000/ask" \
 ## Client Examples
 
 ### Python CLI
+
+![CLI Screenshot](docs/screenshot2.png)
 
 ```bash
 cd examples
