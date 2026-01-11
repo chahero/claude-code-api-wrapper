@@ -267,12 +267,150 @@
             border-radius: 16px;
             border: 1px solid #2a2a4a;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            resize: vertical;
         }
 
         .messages {
-            height: 400px;
+            height: 50vh;
+            min-height: 400px;
             overflow-y: auto;
             padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resize-handle {
+            height: 6px;
+            background: linear-gradient(to bottom, transparent, #2a2a4a, transparent);
+            cursor: ns-resize;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .resize-handle:hover {
+            background: linear-gradient(to bottom, transparent, #4a4ae8, transparent);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .header-settings {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .url-selector {
+                flex-direction: column;
+            }
+
+            .url-display, .url-dropdown-btn {
+                width: 100%;
+            }
+
+            .messages {
+                height: 300px;
+                padding: 16px;
+            }
+
+            .message {
+                max-width: 95%;
+                font-size: 0.95rem;
+            }
+
+            .input-area {
+                flex-direction: column;
+                padding: 12px;
+            }
+
+            .input-wrapper {
+                width: 100%;
+            }
+
+            #prompt-input {
+                min-height: 80px;
+            }
+
+            #send-btn {
+                width: 100%;
+                padding: 12px 20px;
+            }
+
+            .example-btn {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+
+            button {
+                padding: 12px 20px;
+                font-size: 0.95rem;
+            }
+
+            .url-dropdown-btn {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px 8px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            .subtitle {
+                font-size: 0.85rem;
+            }
+
+            .messages {
+                height: 250px;
+                padding: 12px;
+            }
+
+            .message {
+                max-width: 98%;
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+
+            .input-area {
+                gap: 8px;
+                padding: 10px;
+            }
+
+            #prompt-input {
+                min-height: 60px;
+                font-size: 16px;
+            }
+
+            .input-hint {
+                font-size: 0.65rem;
+            }
+
+            .example-btn {
+                padding: 6px 8px;
+                font-size: 0.7rem;
+            }
+
+            .examples {
+                padding: 8px;
+                gap: 4px;
+            }
+
+            .examples span {
+                font-size: 0.75rem;
+            }
         }
 
         .message {
@@ -466,6 +604,7 @@
                     Hello! This is Claude Code API Wrapper. Feel free to ask anything.
                 </div>
             </div>
+            <div class="resize-handle" id="resize-handle"></div>
             <div class="examples">
                 <span>Try:</span>
                 <button class="example-btn" onclick="useExample('Explain what Python is')">What is Python?</button>
@@ -495,6 +634,7 @@
         const urlDropdownEl = document.getElementById('url-dropdown');
         const urlInputModalEl = document.getElementById('url-input-modal');
         const newUrlInputEl = document.getElementById('new-url-input');
+        const resizeHandleEl = document.getElementById('resize-handle');
 
         const STORAGE_KEY = 'claude-api-urls';
         const DEFAULT_URL = 'http://localhost:5000';
@@ -737,6 +877,35 @@
                 inputEl.focus();
             }
         }
+
+        // Resize handle functionality
+        let isResizing = false;
+        let startY = 0;
+        let startHeight = 0;
+
+        resizeHandleEl.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startY = e.clientY;
+            startHeight = messagesEl.offsetHeight;
+            document.body.style.userSelect = 'none';
+            resizeHandleEl.style.background = 'linear-gradient(to bottom, transparent, #4a4ae8, transparent)';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            const deltaY = e.clientY - startY;
+            const newHeight = Math.max(150, startHeight + deltaY);
+            messagesEl.style.height = newHeight + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.userSelect = 'auto';
+                resizeHandleEl.style.background = 'linear-gradient(to bottom, transparent, #2a2a4a, transparent)';
+            }
+        });
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', loadSavedUrls);
