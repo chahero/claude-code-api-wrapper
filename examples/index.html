@@ -25,7 +25,7 @@
         }
 
         header {
-            margin-bottom: 40px;
+            margin-bottom: 0;
         }
 
         .header-top {
@@ -49,7 +49,7 @@
             gap: 12px;
             align-items: center;
             padding: 12px 16px;
-            background: #0f0f1a;
+            background: #1a1a2e;
             border-radius: 12px;
             border: 1px solid #2a2a4a;
         }
@@ -411,6 +411,173 @@
             .examples span {
                 font-size: 0.75rem;
             }
+
+            .history-item-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .history-item-actions {
+                width: 100%;
+            }
+
+            .history-item-actions button {
+                flex: 1;
+                padding: 6px;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Chat History Styles */
+        .history-selector {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+            align-items: center;
+            position: relative;
+        }
+
+        .history-display {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            background: #1a1a2e;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            user-select: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-display:hover {
+            border-color: #4a4ae8;
+        }
+
+        .history-dropdown-btn {
+            padding: 8px 12px;
+            background: #2a2a4a;
+            color: #aaa;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .history-dropdown-btn:hover {
+            background: #3a3a5a;
+            color: #fff;
+        }
+
+        .history-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 60px;
+            margin-top: 8px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .history-dropdown.active {
+            display: flex;
+        }
+
+        .history-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid #2a2a4a;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: #2a2a4a;
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .history-title {
+            flex: 1;
+            color: #aaa;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-time {
+            color: #666;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        .history-item-actions {
+            display: flex;
+            gap: 6px;
+            justify-content: flex-end;
+        }
+
+        .history-item-actions button {
+            padding: 4px 10px;
+            background: #2a2a4a;
+            color: #aaa;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .history-item-actions button:hover {
+            background: #3a3a5a;
+            color: #fff;
+        }
+
+        .history-item-actions .load-btn:hover {
+            background: #4a4ae8;
+            color: #fff;
+        }
+
+        .history-item-actions .delete-btn:hover {
+            background: #6a2a2a;
+            color: #ff8888;
+        }
+
+        .history-empty {
+            padding: 12px 16px;
+            color: #666;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .history-clear-all {
+            padding: 8px 12px;
+            border-top: 1px solid #2a2a4a;
+            text-align: center;
+            color: #666;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .history-clear-all:hover {
+            background: #2a2a4a;
+            color: #ff8888;
         }
 
         .message {
@@ -579,6 +746,14 @@
                     <div class="url-dropdown" id="url-dropdown"></div>
                 </div>
             </div>
+            <div class="header-settings">
+                <label>History:</label>
+                <div class="history-selector">
+                    <div class="history-display" id="history-display">No saved chats</div>
+                    <button class="history-dropdown-btn" onclick="toggleHistoryDropdown()">▼</button>
+                    <div class="history-dropdown" id="history-dropdown"></div>
+                </div>
+            </div>
         </header>
 
         <!-- API URL Input Modal -->
@@ -635,8 +810,11 @@
         const urlInputModalEl = document.getElementById('url-input-modal');
         const newUrlInputEl = document.getElementById('new-url-input');
         const resizeHandleEl = document.getElementById('resize-handle');
+        const historyDisplayEl = document.getElementById('history-display');
+        const historyDropdownEl = document.getElementById('history-dropdown');
 
         const STORAGE_KEY = 'claude-api-urls';
+        const HISTORY_STORAGE_KEY = 'claude-chat-history';
         const DEFAULT_URL = 'http://localhost:5000';
         let currentApiUrl = DEFAULT_URL;
         let savedUrls = [];
@@ -839,6 +1017,9 @@
             messageEl.innerHTML = formatted;
             messagesEl.appendChild(messageEl);
             messagesEl.scrollTop = messagesEl.scrollHeight;
+
+            // Auto-save to history
+            autoSaveCurrentSession();
         }
 
         async function sendMessage() {
@@ -907,8 +1088,230 @@
             }
         });
 
+        // ===== Chat History Functions =====
+        let chatSessions = [];
+
+        // Load chat history from localStorage
+        function loadChatHistory() {
+            const stored = localStorage.getItem(HISTORY_STORAGE_KEY);
+            if (stored) {
+                try {
+                    chatSessions = JSON.parse(stored);
+                } catch (e) {
+                    chatSessions = [];
+                }
+            }
+            updateHistoryDisplay();
+            renderHistoryDropdown();
+        }
+
+        // Get all messages from chat
+        function getAllMessages() {
+            const messages = [];
+            document.querySelectorAll('.message').forEach(el => {
+                if (el.textContent.trim()) {
+                    messages.push({
+                        type: el.classList.contains('user') ? 'user' :
+                               el.classList.contains('error') ? 'error' : 'assistant',
+                        content: el.textContent.trim()
+                    });
+                }
+            });
+            return messages;
+        }
+
+        // Generate session title from first message
+        function generateSessionTitle(messages) {
+            if (!messages || messages.length === 0) return 'Empty session';
+            const firstMsg = messages.find(m => m.type === 'user');
+            if (!firstMsg) return 'Empty session';
+            return firstMsg.content.substring(0, 50) + (firstMsg.content.length > 50 ? '...' : '');
+        }
+
+        // Format relative time
+        function getRelativeTime(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+
+            if (seconds < 60) return 'just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            if (hours < 24) return `${hours}h ago`;
+            if (days < 7) return `${days}d ago`;
+            return new Date(timestamp).toLocaleDateString();
+        }
+
+        // Auto-save current session
+        function autoSaveCurrentSession() {
+            const messages = getAllMessages();
+            if (messages.length === 0) return;
+
+            const sessionId = `session-${Date.now()}`;
+            const session = {
+                id: sessionId,
+                title: generateSessionTitle(messages),
+                timestamp: Date.now(),
+                messages: messages
+            };
+
+            // Add to beginning of array (most recent first)
+            chatSessions.unshift(session);
+
+            // Keep only last 20 sessions
+            if (chatSessions.length > 20) {
+                chatSessions = chatSessions.slice(0, 20);
+            }
+
+            saveChatHistory();
+            updateHistoryDisplay();
+            renderHistoryDropdown();
+        }
+
+        // Save chat history to localStorage
+        function saveChatHistory() {
+            localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(chatSessions));
+        }
+
+        // Update history display text
+        function updateHistoryDisplay() {
+            const count = chatSessions.length;
+            if (count === 0) {
+                historyDisplayEl.textContent = 'No saved chats';
+            } else {
+                historyDisplayEl.textContent = `${count} saved chat${count > 1 ? 's' : ''}`;
+            }
+        }
+
+        // Render history dropdown
+        function renderHistoryDropdown() {
+            historyDropdownEl.innerHTML = '';
+
+            if (chatSessions.length === 0) {
+                const emptyEl = document.createElement('div');
+                emptyEl.className = 'history-empty';
+                emptyEl.textContent = 'No chat history yet';
+                historyDropdownEl.appendChild(emptyEl);
+            } else {
+                chatSessions.forEach(session => {
+                    const itemEl = document.createElement('div');
+                    itemEl.className = 'history-item';
+
+                    const headerEl = document.createElement('div');
+                    headerEl.className = 'history-item-header';
+
+                    const titleEl = document.createElement('span');
+                    titleEl.className = 'history-title';
+                    titleEl.textContent = session.title;
+
+                    const timeEl = document.createElement('span');
+                    timeEl.className = 'history-time';
+                    timeEl.textContent = getRelativeTime(session.timestamp);
+
+                    headerEl.appendChild(titleEl);
+                    headerEl.appendChild(timeEl);
+
+                    const actionsEl = document.createElement('div');
+                    actionsEl.className = 'history-item-actions';
+
+                    const loadBtn = document.createElement('button');
+                    loadBtn.className = 'load-btn';
+                    loadBtn.textContent = 'Load';
+                    loadBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        loadSession(session.id);
+                    };
+
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = '✕';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        deleteSession(session.id);
+                    };
+
+                    actionsEl.appendChild(loadBtn);
+                    actionsEl.appendChild(deleteBtn);
+
+                    itemEl.appendChild(headerEl);
+                    itemEl.appendChild(actionsEl);
+                    historyDropdownEl.appendChild(itemEl);
+                });
+            }
+
+            // Add clear all button
+            const clearAllEl = document.createElement('div');
+            clearAllEl.className = 'history-clear-all';
+            clearAllEl.textContent = 'Clear All History';
+            clearAllEl.onclick = clearAllHistory;
+            historyDropdownEl.appendChild(clearAllEl);
+        }
+
+        // Load a session
+        function loadSession(sessionId) {
+            const session = chatSessions.find(s => s.id === sessionId);
+            if (!session) return;
+
+            // Clear current messages
+            const messages = document.querySelectorAll('.message');
+            messages.forEach(msg => msg.remove());
+
+            // Add first message (welcome message)
+            addMessage('Hello! This is Claude Code API Wrapper. Feel free to ask anything.', 'assistant');
+
+            // Add session messages
+            session.messages.forEach(msg => {
+                addMessage(msg.content, msg.type);
+            });
+
+            closeHistoryDropdown();
+        }
+
+        // Delete a session
+        function deleteSession(sessionId) {
+            chatSessions = chatSessions.filter(s => s.id !== sessionId);
+            saveChatHistory();
+            updateHistoryDisplay();
+            renderHistoryDropdown();
+        }
+
+        // Clear all history
+        function clearAllHistory() {
+            if (confirm('Are you sure you want to delete all chat history?')) {
+                chatSessions = [];
+                saveChatHistory();
+                updateHistoryDisplay();
+                renderHistoryDropdown();
+            }
+        }
+
+        // Toggle history dropdown
+        function toggleHistoryDropdown() {
+            historyDropdownEl.classList.toggle('active');
+        }
+
+        // Close history dropdown
+        function closeHistoryDropdown() {
+            historyDropdownEl.classList.remove('active');
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.url-selector') && !e.target.closest('.url-dropdown-btn')) {
+                closeUrlDropdown();
+            }
+            if (!e.target.closest('.history-selector') && !e.target.closest('.history-dropdown-btn')) {
+                closeHistoryDropdown();
+            }
+        });
+
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', loadSavedUrls);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedUrls();
+            loadChatHistory();
+        });
     </script>
 </body>
 </html>
