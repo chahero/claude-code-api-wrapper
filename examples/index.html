@@ -97,10 +97,17 @@
             background: #1a1a2e;
             border-top: 1px solid #2a2a4a;
             gap: 12px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
         }
 
         #prompt-input {
-            flex: 1;
             padding: 14px 18px;
             border: 1px solid #2a2a4a;
             border-radius: 12px;
@@ -109,6 +116,10 @@
             font-size: 1rem;
             outline: none;
             transition: border-color 0.2s;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+            max-height: 200px;
         }
 
         #prompt-input:focus {
@@ -117,6 +128,13 @@
 
         #prompt-input::placeholder {
             color: #666;
+        }
+
+        .input-hint {
+            font-size: 0.75rem;
+            color: #555;
+            padding: 0 4px;
+            margin-top: -6px;
         }
 
         button {
@@ -230,12 +248,14 @@
                 <button class="example-btn" onclick="useExample('What is the difference between let and const?')">let vs const</button>
             </div>
             <div class="input-area">
-                <input
-                    type="text"
-                    id="prompt-input"
-                    placeholder="Enter your question..."
-                    autocomplete="off"
-                >
+                <div class="input-wrapper">
+                    <textarea
+                        id="prompt-input"
+                        placeholder="Enter your question... (Shift+Enter for new line, Enter to send)"
+                        autocomplete="off"
+                    ></textarea>
+                    <div class="input-hint">⌨️ Shift+Enter: New line | Enter: Send</div>
+                </div>
                 <button id="send-btn" onclick="sendMessage()">Send</button>
             </div>
         </div>
@@ -257,7 +277,13 @@
         const sendBtn = document.getElementById('send-btn');
         const apiUrlEl = document.getElementById('api-url');
 
-        // Send on Enter key
+        // Auto-resize textarea
+        inputEl.addEventListener('input', () => {
+            inputEl.style.height = 'auto';
+            inputEl.style.height = Math.min(inputEl.scrollHeight, 200) + 'px';
+        });
+
+        // Send on Enter key (Shift+Enter for new line)
         inputEl.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
