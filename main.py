@@ -1,5 +1,6 @@
 import asyncio
 import os
+import tempfile
 from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -41,11 +42,25 @@ class PromptResponse(BaseModel):
 async def ask_claude(request: PromptRequest):
     """
     Claude Code CLI에 프롬프트를 전달하고 응답을 반환합니다.
+    임시 파일을 사용하여 프롬프트를 안정적으로 전달합니다.
     """
+    temp_file = None
     try:
-        # claude --print 옵션으로 non-interactive 실행
-        # Windows에서는 shell=True로 실행해야 .cmd 파일을 찾을 수 있음
-        cmd = f'claude --print "{request.prompt}"'
+        # 프롬프트를 임시 파일에 저장
+        with tempfile.NamedTemporaryFile(
+            mode='w',
+            suffix='.txt',
+            delete=False,
+            encoding='utf-8'
+        ) as f:
+            f.write(request.prompt)
+            temp_file = f.name
+
+        # Windows와 Linux 모두 지원하는 리다이렉트 명령
+        if os.name == 'nt':  # Windows
+            cmd = f'type "{temp_file}" | claude --print'
+        else:  # Linux/Mac
+            cmd = f'cat "{temp_file}" | claude --print'
 
         process = await asyncio.create_subprocess_shell(
             cmd,
@@ -79,6 +94,13 @@ async def ask_claude(request: PromptRequest):
             status_code=500,
             detail=f"오류 발생: {str(e)}"
         )
+    finally:
+        # 임시 파일 삭제
+        if temp_file and os.path.exists(temp_file):
+            try:
+                os.remove(temp_file)
+            except Exception:
+                pass  # 삭제 실패해도 계속 진행
 
 
 @app.get("/health")
