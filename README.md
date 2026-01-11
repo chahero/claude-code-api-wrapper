@@ -52,6 +52,19 @@ python main.py
 - API 문서: http://localhost:5000/docs
 - 웹 UI: http://localhost:5000
 
+## 웹 UI 기능
+
+### 주요 기능
+
+- **여러 줄 입력**: Shift+Enter로 줄바꿈, Enter로 전송
+- **API URL 관리**: 헤더의 드롭다운에서 여러 개의 API URL 저장 및 전환
+- **채팅 이력**: 모든 대화가 자동으로 저장되며, 최대 20개까지 보관
+  - 저장된 채팅 클릭하여 복원 가능
+  - 개별 또는 전체 삭제 가능
+- **채팅창 크기 조절**: 메시지 영역과 예시 사이의 바를 드래그하여 크기 조절
+- **모바일 반응형**: 모바일/태블릿에서도 완벽히 작동
+- **자동 저장**: 입력한 메시지들이 자동으로 브라우저 저장소에 저장됨
+
 ## API 사용법
 
 ### 엔드포인트
@@ -78,6 +91,17 @@ python main.py
   "success": true,
   "response": "Hello! How can I help you today?",
   "error": null
+}
+```
+
+### 작업 디렉토리 지정
+
+특정 폴더의 컨텍스트에서 질문하려면:
+
+```json
+{
+  "prompt": "이 폴더의 파일들을 분석해줘",
+  "working_directory": "F:\\my_project"
 }
 ```
 

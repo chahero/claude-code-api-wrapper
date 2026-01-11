@@ -52,6 +52,19 @@ Once the server starts:
 - API Documentation: http://localhost:5000/docs
 - Web UI: http://localhost:5000
 
+## Web UI Features
+
+### Key Features
+
+- **Multi-line Input**: Press Shift+Enter for new line, Enter to send
+- **API URL Management**: Save and switch between multiple API URLs from the header dropdown
+- **Chat History**: All conversations are automatically saved, up to 20 sessions stored
+  - Click saved chat to restore
+  - Delete individual or all history
+- **Resizable Chat Window**: Drag the divider between messages and examples to adjust height
+- **Mobile Responsive**: Works perfectly on mobile and tablet devices
+- **Auto-save**: Messages are automatically saved to browser storage
+
 ## API Usage
 
 ### Endpoints
@@ -78,6 +91,17 @@ Once the server starts:
   "success": true,
   "response": "Hello! How can I help you today?",
   "error": null
+}
+```
+
+### Specify Working Directory
+
+To ask questions with context from a specific folder:
+
+```json
+{
+  "prompt": "Analyze the files in this folder",
+  "working_directory": "C:\\my_project"
 }
 ```
 
