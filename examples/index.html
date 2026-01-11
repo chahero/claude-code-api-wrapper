@@ -625,6 +625,8 @@
             border-top: 1px solid #2a2a4a;
             gap: 12px;
             align-items: flex-start;
+            max-height: 400px;
+            overflow-y: auto;
         }
 
         .input-wrapper {
@@ -632,6 +634,7 @@
             flex-direction: column;
             gap: 10px;
             flex: 1;
+            max-height: 360px;
         }
 
         #prompt-input {
@@ -646,7 +649,7 @@
             font-family: inherit;
             resize: vertical;
             min-height: 60px;
-            max-height: 200px;
+            max-height: 350px;
         }
 
         #prompt-input:focus {
@@ -786,17 +789,18 @@
                 <button class="example-btn" onclick="useExample('Write a hello world in JavaScript')">Hello World JS</button>
                 <button class="example-btn" onclick="useExample('What is the difference between let and const?')">let vs const</button>
             </div>
-            <div class="input-area">
-                <div class="input-wrapper">
-                    <textarea
-                        id="prompt-input"
-                        placeholder="Enter your question... (Shift+Enter for new line, Enter to send)"
-                        autocomplete="off"
-                    ></textarea>
-                    <div class="input-hint">⌨️ Shift+Enter: New line | Enter: Send</div>
-                </div>
-                <button id="send-btn" onclick="sendMessage()">Send</button>
+        </div>
+
+        <div class="input-area">
+            <div class="input-wrapper">
+                <textarea
+                    id="prompt-input"
+                    placeholder="Enter your question... (Shift+Enter for new line, Enter to send)"
+                    autocomplete="off"
+                ></textarea>
+                <div class="input-hint">⌨️ Shift+Enter: New line | Enter: Send</div>
             </div>
+            <button id="send-btn" onclick="sendMessage()">Send</button>
         </div>
 
     </div>
