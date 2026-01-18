@@ -1,5 +1,7 @@
 [한국어](README.md) | **English**
 
+> **📢 Notice**: This project has been integrated into https://github.com/chahero/code-agent-api-wrapper.
+
 # Claude Code API Wrapper
 
 A project that wraps Claude Code CLI as a REST API.
