@@ -1,6 +1,6 @@
 **한국어** | [English](README.en.md)
 
-> **📢 공지**: 이 프로젝트는 https://github.com/chahero/code-agent-api-wrapper로 통합되었습니다.
+> **📢 공지**: 이 프로젝트는 https://github.com/chahero/code-agent-api-wrapper 로 통합되었습니다.
 
 # Claude Code API Wrapper
 
